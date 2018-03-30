@@ -19,6 +19,13 @@ public class Account {
     @Column(name = "number")
     private String number;
 
+    @Column(name = "amount")
+    private BigDecimal amount;
+
+    @Version
+    @Column(name = "version")
+    private Long version;
+
     public Long getId() {
         return id;
     }
@@ -41,5 +48,21 @@ public class Account {
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

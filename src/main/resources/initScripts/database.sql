@@ -9,6 +9,8 @@ CREATE TABLE Account (
 id INTEGER NOT NULL,
 user_id INTEGER,
 number VARCHAR(20),
+amount NUMERIC(15,2) DEFAULT 0,
+version INTEGER DEFAULT 0,
 PRIMARY KEY (id),
 CONSTRAINT accont_fkey FOREIGN KEY (user_id) REFERENCES User(id)
 );

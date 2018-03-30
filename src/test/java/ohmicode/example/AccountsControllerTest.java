@@ -33,6 +33,11 @@ public class AccountsControllerTest {
         mvc.perform(MockMvcRequestBuilders.get("/balance/2").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(equalTo("150.00")));
+
+        //clean
+        mvc.perform(MockMvcRequestBuilders.post("/withdraw/2/150").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo("success")));
     }
 
     @Test
@@ -40,34 +45,65 @@ public class AccountsControllerTest {
         mvc.perform(MockMvcRequestBuilders.post("/deposit/1/100").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(equalTo("success")));
+
         mvc.perform(MockMvcRequestBuilders.post("/withdraw/1/30").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(equalTo("success")));
         mvc.perform(MockMvcRequestBuilders.get("/balance/1").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(equalTo("70.00")));
+
+        //clean
+        mvc.perform(MockMvcRequestBuilders.post("/withdraw/1/70").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo("success")));
     }
 
     @Test
     public void testWithdrawError() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/deposit/1/70").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo("success")));
+
         mvc.perform(MockMvcRequestBuilders.post("/withdraw/1/200").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
         mvc.perform(MockMvcRequestBuilders.get("/balance/1").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(equalTo("70.00")));
+
+        //clean
+        mvc.perform(MockMvcRequestBuilders.post("/withdraw/1/70").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo("success")));
     }
 
     @Test
     public void testMoveError() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/deposit/1/70").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo("success")));
+
         mvc.perform(MockMvcRequestBuilders.post("/move/1/2/100").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
         mvc.perform(MockMvcRequestBuilders.get("/balance/1").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(equalTo("70.00")));
+
+        //clean
+        mvc.perform(MockMvcRequestBuilders.post("/withdraw/1/70").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo("success")));
     }
 
     @Test
     public void testMoveSuccess() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/deposit/1/70").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo("success")));
+        mvc.perform(MockMvcRequestBuilders.post("/deposit/2/150").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo("success")));
+
         mvc.perform(MockMvcRequestBuilders.post("/move/1/2/10.50").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(equalTo("success")));
@@ -77,6 +113,14 @@ public class AccountsControllerTest {
         mvc.perform(MockMvcRequestBuilders.get("/balance/2").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(equalTo("160.50")));
+
+        //clean
+        mvc.perform(MockMvcRequestBuilders.post("/withdraw/1/59.50").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo("success")));
+        mvc.perform(MockMvcRequestBuilders.post("/withdraw/2/160.50").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo("success")));
     }
 
 }

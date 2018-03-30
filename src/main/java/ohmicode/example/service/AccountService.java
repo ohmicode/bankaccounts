@@ -32,8 +32,7 @@ public class AccountService {
     @Transactional
     public boolean withdraw(Long accountId, BigDecimal amount) {
         Account account = accountRepository.findById(accountId).orElse(null);
-        BigDecimal balance = calculateBalance(account);
-        if (account != null && balance.compareTo(amount)>=0) {
+        if (account != null && account.getAmount().compareTo(amount)>=0) {
             withdrawFromAccount(account, amount);
             return true;
         }
@@ -44,8 +43,7 @@ public class AccountService {
     public boolean move(Long fromId, Long toId, BigDecimal amount) {
         Account accountFrom = accountRepository.findById(fromId).orElse(null);
         Account accountTo = accountRepository.findById(toId).orElse(null);
-        BigDecimal balance = calculateBalance(accountFrom);
-        if (accountFrom != null && accountTo != null && balance.compareTo(amount)>=0) {
+        if (accountFrom != null && accountTo != null && accountFrom.getAmount().compareTo(amount)>=0) {
             withdrawFromAccount(accountFrom, amount);
             depositToAccount(accountTo, amount);
             return true;
@@ -55,26 +53,24 @@ public class AccountService {
 
     public String getState() {
         return accountRepository.findAll().stream()
-                .map(a -> String.format("%s,%s,%s", a.getId(), a.getUser().getName(), calculateBalance(a)))
+                .map(a -> String.format("%s,%s,%s", a.getId(), a.getUser().getName(), a.getAmount()))
                 .collect(Collectors.joining("; "));
     }
 
     public BigDecimal getBalance(Long accountId) {
         Account account = accountRepository.findById(accountId).orElse(null);
-        return calculateBalance(account);
+        return account == null ? BigDecimal.ZERO : account.getAmount();
     }
 
-
-    private BigDecimal calculateBalance(Account account) {
-        BigDecimal balance = accountRepository.calculateBalance(account);
-        return balance == null ? BigDecimal.ZERO : balance;
-    }
 
     private void depositToAccount(Account account, BigDecimal amount) {
         Payment payment = new Payment();
         payment.setAccount(account);
         payment.setAmount(amount);
         paymentRepositiry.save(payment);
+
+        account.setAmount(account.getAmount().add(amount));
+        accountRepository.save(account);
     }
 
     private void withdrawFromAccount(Account account, BigDecimal amount) {
@@ -82,5 +78,8 @@ public class AccountService {
         payment.setAccount(account);
         payment.setAmount(amount.negate());
         paymentRepositiry.save(payment);
+
+        account.setAmount(account.getAmount().subtract(amount));
+        accountRepository.save(account);
     }
 }

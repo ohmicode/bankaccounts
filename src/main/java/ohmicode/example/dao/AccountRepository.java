@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
+    @Deprecated
     @Query("SELECT sum(amount) FROM Payment WHERE account = ?1")
     BigDecimal calculateBalance(Account account);
 }
