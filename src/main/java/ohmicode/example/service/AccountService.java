@@ -1,7 +1,7 @@
 package ohmicode.example.service;
 
 import ohmicode.example.dao.AccountRepository;
-import ohmicode.example.dao.PaymentRepositiry;
+import ohmicode.example.dao.PaymentRepository;
 import ohmicode.example.model.Account;
 import ohmicode.example.model.Payment;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
-    private PaymentRepositiry paymentRepositiry;
+    private PaymentRepository paymentRepository;
 
     @Transactional
     public boolean deposit(Long accountId, BigDecimal amount) {
@@ -67,7 +67,7 @@ public class AccountService {
         Payment payment = new Payment();
         payment.setAccount(account);
         payment.setAmount(amount);
-        paymentRepositiry.save(payment);
+        paymentRepository.save(payment);
 
         account.setAmount(account.getAmount().add(amount));
         accountRepository.save(account);
@@ -77,7 +77,7 @@ public class AccountService {
         Payment payment = new Payment();
         payment.setAccount(account);
         payment.setAmount(amount.negate());
-        paymentRepositiry.save(payment);
+        paymentRepository.save(payment);
 
         account.setAmount(account.getAmount().subtract(amount));
         accountRepository.save(account);
